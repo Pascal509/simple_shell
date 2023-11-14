@@ -1,38 +1,36 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include "shell.h"
 
-int main () 
+int main (void)
 {
 	char *buffr;
-	size_t display_chars;
+	size_t buffr_size;
+	size_t length;
 
-	do {
-		printf("#cisfun$");
-		buffr = (char *)malloc(display_chars * sizeof(char));
+	while (1) {
+		display_my_prompt();
+		buffr_size = 0;
+		buffr = NULL;
 
-		if (getline(&buffr, &display_chars, stdin) != NULL){
-			//Remove trailing newline
-			int len = strlen(buffr);
-			if (len > 0 && buffr [len - 1] == '\n') {
-				buffr[len - 1] = '\0';
+		if (getline(&buffr, &buffr_size, stdin) == -1) {
+			if (feof(stdin))
+			{
+				printf("\n");
 			}
-
-			if (strcmp(buffr, "Exit loop") == 0) {
-				break; // Exit loop
+			else {
+				perror("Error reading input");
 			}
-			printf("You entered: %s\n", buffr);
+			break;
 		}
-		else if (feof(stdin)) {
-			//Handle end-of-file
-			printf("\n Exiting the program\n");
-			break;
-		}else {
-			printf("Error in reading input.\n");
-			break;
-		} 
-	}while (1); //infinite loop until user exits file
+		length = strlen(buffr);
+
+		if (length > 0 && buffr[length - 1] == '\n') {
+			buffr[length - 1] = '\0';
+		}
+
+		exec_buffr(buffr);
+	}
+	free(buffr);
+	printf("Exiting shell...\n");
 
 	return 0;
-
 }
