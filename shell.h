@@ -9,6 +9,8 @@
 #include <sys/wait.h>
 #define MAX_COMMAND_LENGTH 100
 
+extern char **environ;
+
 int main (void);
 
 void display_my_prompt();

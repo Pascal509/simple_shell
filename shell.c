@@ -9,7 +9,6 @@ int main (void)
 	while (1) {
 		display_my_prompt();
 		buffr_size = 0;
-		buffr = NULL;
 
 		if (getline(&buffr, &buffr_size, stdin) == -1) {
 			if (feof(stdin))
@@ -26,11 +25,16 @@ int main (void)
 		if (length > 0 && buffr[length - 1] == '\n') {
 			buffr[length - 1] = '\0';
 		}
+		/* Exit command */
+		if (strcmp(buffr, "exit") == 0)
+		{
+			printf("Exiting shell...\n");
+			exit(EXIT_SUCCESS);
+		}
 
 		exec_buffr(buffr);
 	}
 	free(buffr);
-	printf("Exiting shell...\n");
 
 	return 0;
 }
