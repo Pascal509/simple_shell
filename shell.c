@@ -1,40 +1,39 @@
 #include "shell.h"
 
-int main (void)
+int main()
 {
 	char *buffr;
 	size_t buffr_size;
 	size_t length;
 
-	while (1) {
+	while (1)
+	{
 		display_my_prompt();
 		buffr_size = 0;
 
-		if (getline(&buffr, &buffr_size, stdin) == -1) {
+		if (getline(&buffr, &buffr_size, stdin) == -1)
+		{
 			if (feof(stdin))
-			{
 				printf("\n");
-			}
-			else {
+			else
+			{
 				perror("Error reading input");
 			}
 			break;
 		}
 		length = strlen(buffr);
 
-		if (length > 0 && buffr[length - 1] == '\n') {
+		if (length > 0 && buffr[length - 1] == '\n')
 			buffr[length - 1] = '\0';
-		}
 		/* Exit command */
 		if (strcmp(buffr, "exit") == 0)
 		{
 			printf("Exiting shell...\n");
 			exit(EXIT_SUCCESS);
 		}
-
 		exec_buffr(buffr);
 	}
 	free(buffr);
 
-	return 0;
+	return (0);
 }

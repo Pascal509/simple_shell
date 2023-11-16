@@ -9,9 +9,13 @@
 #include <sys/wait.h>
 #define MAX_COMMAND_LENGTH 100
 
+int main();
+
 extern char **environ;
 
-int main (void);
+void print_environ(void);
+
+void my_envp(char *my_path);
 
 void display_my_prompt();
 

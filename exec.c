@@ -3,9 +3,6 @@
 void exec_buffr(const char *buffr)
 {
 	pid_t new_pid = fork();
-	char *my_path;
-	char *env_path;
-	char *dir;
 
 	if (new_pid == -1)
 	{
@@ -18,57 +15,25 @@ void exec_buffr(const char *buffr)
 		int counter = 0;
 
 		char *tok = strtok((char *)buffr, " ");
-		while (tok != NULL && counter < MAX_COMMAND_LENGTH / 2) {
+		char *my_path = NULL;
+
+		while (tok != NULL && counter < MAX_COMMAND_LENGTH / 2) 
+		{
 			args[counter++] = tok;
 			tok = strtok(NULL, " ");
 		}
 		args[counter] = NULL;
 
-		/* Check for command "env"*/
 		if (strcmp(args[0], "env") == 0)
 		{
-			char **env = environ;
-			while (*env != NULL)
-			{
-				printf("%s\n", *env);
-				env++;
-			}
+			print_environ();
 			exit(EXIT_SUCCESS);
 		}
 
-		/* find my path in the executable
-		 */
-		my_path = NULL;
-		env_path = getenv("PATH");
+		my_path = my_envp(my_path);
 
-		if (env_path != NULL) 
+		if (execve(my_path, args, environ) == -1)
 		{
-			dir = strtok(env_path, ":");
-			while (dir != NULL)
-			{
-				/*Construct my path */
-				my_path = (char *)malloc(strlen(dir) + strlen(args[0]) + 2);
-				sprintf(my_path, "%s/%s", dir, args[0]);
-
-				/* Search if the exe file exists*/
-				if(access(my_path, X_OK) == 0)
-				{
-					break;
-				}
-				free(my_path);
-				my_path = NULL;
-
-				dir = strtok(NULL, ":");
-			}
-		}
-
-		if (my_path == NULL)
-		{
-			fprintf(stderr, "Command does not exist: %s\n", args[0]);
-			exit(EXIT_FAILURE);
-		}
-
-		if (execve(my_path, args, environ) == -1) {
 			perror("execve");
 			exit(EXIT_FAILURE);
 		}
