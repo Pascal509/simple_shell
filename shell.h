@@ -19,6 +19,6 @@ void my_envp(char *my_path);
 
 void display_my_prompt();
 
-void exec_buffr(const char *buffr);
+void exec_buffr(char *buffr);
 
 #endif
