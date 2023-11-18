@@ -3,43 +3,46 @@ void exec_buffr(char *buffr);
 
 void exec_buffr(char *buffr)
 {
-	pid_t new_pid = fork();
 	char *env_path;
 	char *my_path;
 	char *dir;
 	char *args[MAX_COMMAND_LENGTH / 2];
 	int counter;
 	char *tok;
+	pid_t new_pid;
+
+	counter = 0;
+	tok = strtok(buffr, " ");
+
+	while (tok != NULL && counter < MAX_COMMAND_LENGTH / 2)
+	{
+		args[counter++] = tok;
+		tok = strtok(NULL, " ");
+	}
+	args[counter] = NULL;
+
+	if (strcmp(buffr, "exit") == 0)
+	{
+		free(buffr);
+		printf("Exiting shell...\n");
+		exit(EXIT_SUCCESS);
+	}
+	new_pid = fork();
 
 	if (new_pid == -1)
 	{
 		perror("fork");
+		free(buffr);
 		exit(EXIT_FAILURE);
 	}
 	else if (new_pid == 0)
 	{
-		counter = 0;
-		tok = strtok(buffr, " ");
-
-		while (tok != NULL && counter < MAX_COMMAND_LENGTH / 2) 
-		{
-			args[counter++] = tok;
-			tok = strtok(NULL, " ");
-		}
-		args[counter] = NULL;
-
 		/* Exit command */
 		if (args[0] == NULL || strcmp(args[0], "") == 0)
 		{
-                        exit(EXIT_SUCCESS);
+			free(buffr);
+			exit(EXIT_SUCCESS);
 		}
-		/**if (strcmp(args[0], "exit") == 0)
-		*{
-		*	printf("Exiting shell...\n");
-		*	free(buffr);
-		*	exit(EXIT_SUCCESS);
-		}*/
-
 		if (strcmp(args[0], "env") == 0)
 		{
 			print_environ();
@@ -57,8 +60,13 @@ void exec_buffr(char *buffr)
 			dir = strtok(env_path, ":");
 			while (dir != NULL)
 			{
-				/*Construct my path */
 				my_path = (char *)malloc(strlen(dir) + strlen(args[0]) + 2);
+
+				if (my_path == NULL)
+				{
+					free(buffr);
+					exit(EXIT_FAILURE);
+				}
 				sprintf(my_path, "%s/%s", dir, args[0]);
 
 				/* Search if the exe file exists*/
@@ -76,11 +84,14 @@ void exec_buffr(char *buffr)
 		if (my_path == NULL)
 		{
 			fprintf(stderr, "Command does not exist: %s\n", args[0]);
+			free(buffr);
 			exit(EXIT_FAILURE);
 		}
 		if (execve(my_path, args, environ) == -1)
 		{
 			perror("execve");
+			free(my_path);
+			free(buffr);
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -89,4 +100,5 @@ void exec_buffr(char *buffr)
 		int current;
 		waitpid(new_pid, &current, 0);
 	}
+	free(buffr);
 }

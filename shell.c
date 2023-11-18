@@ -30,12 +30,12 @@ int main()
 		{
 			buffr[length - 1] = '\0';
 		}
-		if (strcmp(buffr, "exit") == 0)
+		/*if (strcmp(buffr, "exit") == 0)
                 {
                         printf("Exiting shell...\n");
                         free(buffr);
                         exit(EXIT_SUCCESS);
-                }
+                }*/
 		exec_buffr(buffr);
 
 	}
