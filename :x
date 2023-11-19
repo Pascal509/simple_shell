@@ -1,13 +1,6 @@
 #include "shell.h"
 void exec_buffr(char *buffr);
 
-/**
- * exec_buffr - 'create a new process using fork()
- * and executes the command'
- * @buffr: function param
- * Return: Always 0 (Success)
- */
-
 void exec_buffr(char *buffr)
 {
 	char *env_path;

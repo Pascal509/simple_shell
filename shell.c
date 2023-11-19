@@ -1,10 +1,16 @@
 #include "shell.h"
 
-int main()
+/**
+ * main - entry point of program
+ * Return: 0
+ */
+
+int main(void)
 {
 	char *buffr;
 	size_t buffr_size;
 	size_t length;
+
 	length = 0;
 
 	while (1)
@@ -30,12 +36,6 @@ int main()
 		{
 			buffr[length - 1] = '\0';
 		}
-		/*if (strcmp(buffr, "exit") == 0)
-                {
-                        printf("Exiting shell...\n");
-                        free(buffr);
-                        exit(EXIT_SUCCESS);
-                }*/
 		exec_buffr(buffr);
 
 	}
