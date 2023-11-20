@@ -30,6 +30,8 @@ int main(void)
 			free(buffr);
 			break;
 		}
+		buffr = strdup(buffr);
+
 		length = strlen(buffr);
 
 		if (length > 0 && buffr[length - 1] == '\n')
