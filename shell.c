@@ -5,43 +5,72 @@
  * Return: 0
  */
 
-int main(void)
+int main(int argc, char *argv[])
 {
-	char *buffr;
+	char *buffr = "/bin/ls";
 	size_t buffr_size;
 	size_t length;
+	int result;
 
 	length = 0;
 
-	while (1)
+	if (argc > 1)
 	{
-		display_my_prompt();
-		buffr_size = 0;
-		buffr = NULL;
-
-		if (getline(&buffr, &buffr_size, stdin) == -1)
+		FILE *script = fopen(argv[1], "r");
+		if (!script)
 		{
-			if (feof(stdin))
-				printf("\n");
-			else
+			perror("Error opening file");
+			return 1;
+		}
+
+		while (getline(&buffr, &buffr_size, script) != -1)
+		{
+			length = strlen(buffr);
+			if (length > 0 && buffr[length - 1] == '\n')
 			{
-				perror("Error reading input");
+				buffr[length - 1] = '\0';
 			}
-			free(buffr);
-			break;
+			exec_buffr(buffr);
 		}
-		buffr = strdup(buffr);
-
-		length = strlen(buffr);
-
-		if (length > 0 && buffr[length - 1] == '\n')
-		{
-			buffr[length - 1] = '\0';
-		}
-		exec_buffr(buffr);
-
+		fclose(script);
 	}
-	free(buffr);
+	else
+	{
+		while (1)
+		{
+			display_my_prompt();
+			buffr_size = 0;
+			buffr = NULL;
 
-	return (0);
+			if (getline(&buffr, &buffr_size, stdin) == -1)
+			{
+				if (feof(stdin))
+					printf("\n");
+				else
+				{
+					perror("Error reading input");
+				}
+				free(buffr);
+				break;
+			}
+			buffr = strdup(buffr);
+			length = strlen(buffr);
+			system(buffr);
+
+
+			if (length > 0 && buffr[length - 1] == '\n')
+			{
+				buffr[length - 1] = '\0';
+			}
+
+			exec_buffr(buffr);
+
+			result = system(buffr);
+			if (result == -1)
+			{
+				perror("error executing command");
+			}
+		}
+	}
+	return 0;
 }

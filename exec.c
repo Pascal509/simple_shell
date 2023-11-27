@@ -31,7 +31,6 @@ void exec_buffr(char *buffr)
 	if (strcmp(buffr, "exit") == 0)
 	{
 		free(buffr);
-		printf("Exiting shell...\n");
 		exit(EXIT_SUCCESS);
 	}
 	new_pid = fork();
@@ -90,7 +89,6 @@ void exec_buffr(char *buffr)
 
 		if (my_path == NULL)
 		{
-			fprintf(stderr, "Command does not exist: %s\n", args[0]);
 			free(buffr);
 			exit(EXIT_FAILURE);
 		}
@@ -105,7 +103,6 @@ void exec_buffr(char *buffr)
 	else
 	{
 		int current;
-
 		waitpid(new_pid, &current, 0);
 	}
 	free(buffr);

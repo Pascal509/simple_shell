@@ -9,7 +9,7 @@
 #include <sys/wait.h>
 #define MAX_COMMAND_LENGTH 100
 
-int main(void);
+int main(int argc, char *argv[]);
 
 extern char **environ;
 
